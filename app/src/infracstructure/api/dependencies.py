@@ -3,6 +3,7 @@ from typing import Annotated
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.src.core.models.pagination import PaginationParams
 from app.src.core.repositories.task import SQLTaskRepository
 from app.src.core.repositories.user import SQLUserRepository
 from app.src.core.services.task import TaskService
@@ -20,5 +21,6 @@ async def get_task_service(session: DatabaseSessionDP) -> TaskService:
     return TaskService(SQLTaskRepository(session))
 
 
+PaginationDP = Annotated[PaginationParams, Depends(PaginationParams)]
 UserServiceDP = Annotated[UserService, Depends(get_user_service)]
 TaskServiceDP = Annotated[TaskService, Depends(get_task_service)]

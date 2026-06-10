@@ -5,8 +5,8 @@ from fastapi.exceptions import HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 
 from app.src.core.models.user import UserInputModel, UserResponseModel, UserUpdateModel
-from app.src.core.security.auth import authenticate_user, get_current_user
 from app.src.core.security.token import create_token, decode_token
+from app.src.infracstructure.auth.auth import authenticate_user, get_current_user
 
 from .dependencies import UserServiceDP
 

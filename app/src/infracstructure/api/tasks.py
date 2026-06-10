@@ -2,18 +2,19 @@ from fastapi import APIRouter, Depends
 
 from app.src.core.models.task import TaskInputModel, TaskUpdateModel
 from app.src.core.models.user import UserResponseModel
-from app.src.core.security.auth import get_current_user
-from app.src.infracstructure.api.dependencies import TaskServiceDP
+from app.src.infracstructure.api.dependencies import PaginationDP, TaskServiceDP
+from app.src.infracstructure.auth.auth import get_current_user
 
 router = APIRouter(prefix="/tasks", tags=["Tasks"])
 
 
 @router.get("/")
 async def get_tasks(
+    pagination: PaginationDP,
     task_service: TaskServiceDP,
     current_user: UserResponseModel = Depends(get_current_user),
 ):
-    list_tasks = await task_service.get_all_tasks(current_user.id)
+    list_tasks = await task_service.get_all_tasks(current_user.id, pagination)
 
     return list_tasks
 
