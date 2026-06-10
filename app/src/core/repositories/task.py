@@ -7,6 +7,7 @@ from sqlalchemy import insert, select
 from sqlalchemy import update as sqlalchemy_udapte
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.src.core.models.pagination import PaginationParams
 from app.src.core.models.task import TaskInputModel, TaskResponseModel, TaskUpdateModel
 from app.src.infracstructure.db.mappers.task import TaskMapper
 from app.src.infracstructure.db.models.task import Tasks
@@ -19,7 +20,9 @@ class AbstractTaskRepository(ABC):
     ) -> TaskResponseModel | None: ...
 
     @abstractmethod
-    async def get_all(self, user_id: UUID) -> list[TaskResponseModel] | None: ...
+    async def get_all(
+        self, user_id: UUID, pagination: PaginationParams
+    ) -> list[TaskResponseModel] | None: ...
 
     @abstractmethod
     async def create(self, user_id: UUID, task: TaskInputModel): ...
@@ -45,9 +48,16 @@ class SQLTaskRepository(AbstractTaskRepository):
 
         return None
 
-    async def get_all(self, user_id: UUID) -> list[TaskResponseModel] | None:
+    async def get_all(
+        self, user_id: UUID, pagination: PaginationParams
+    ) -> list[TaskResponseModel] | None:
 
-        query = select(Tasks).filter(Tasks.user_id == user_id)
+        query = (
+            select(Tasks)
+            .filter(Tasks.user_id == user_id)
+            .limit(pagination.page)
+            .offset(pagination.offset)
+        )
 
         tasks = (await self._session.execute(query)).scalars().all()
 

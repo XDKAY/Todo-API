@@ -1,5 +1,6 @@
 from uuid import UUID
 
+from app.src.core.models.pagination import PaginationParams
 from app.src.core.models.task import TaskInputModel, TaskResponseModel, TaskUpdateModel
 from app.src.core.repositories.task import AbstractTaskRepository
 
@@ -13,8 +14,10 @@ class TaskService:
     ) -> TaskResponseModel | None:
         return await self._task_repo.get_by_id(user_id, task_id)
 
-    async def get_all_tasks(self, user_id: UUID) -> list[TaskResponseModel] | None:
-        return await self._task_repo.get_all(user_id)
+    async def get_all_tasks(
+        self, user_id: UUID, pagination: PaginationParams
+    ) -> list[TaskResponseModel] | None:
+        return await self._task_repo.get_all(user_id, pagination)
 
     async def create_task(self, user_id: UUID, task: TaskInputModel):
         await self._task_repo.create(user_id, task)
